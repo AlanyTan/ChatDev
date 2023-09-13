@@ -1,0 +1,48 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/postgres
+{
+  "name": "ChatDev",
+  //"dockerComposeFile": "docker-compose.yml",
+  //"service": "app",
+  "image":"mcr.microsoft.com/devcontainers/python:0-3.11",
+  //"dockerFile": "Dockerfile",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": true,
+      "installDockerBuildx": true,
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // This can be used to network with other containers or the host.
+  "forwardPorts": [
+    5000,
+    5432
+  ],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  //"postCreateCommand": "curl -sSL https://install.python-poetry.org | python - && poetry completions bash >> ~/.bash_completion",
+  "postCreateCommand": "poetry completions bash >> ~/.bash_completion && echo 'export PYTHONPATH=\"/workspaces/${localWorkspaceFolderBasename}\"' >> ~/.bashrc && poetry config virtualenvs.in-project true && poetry env use python && pre-commit install",
+  // Use postStartCommand to run poetry install and update .vscode/settings.json file to allow auto check of packages (default vscode support of venv requires requirements, while poetry uses venv under the hood, vscode does not work directly with poetry yet)
+  // "postStartCommand": "cd src && poetry install && POETRY_LIB_PATH=$(ls -d $(poetry env info -p)/lib/*/site-packages| sed -e \"s/\\//\\\\\\\\\\//g\") && sed -i 's/\\(\"python.analysis.extraPaths\" *: *\\).*/\\1[\"app\",\"'${POETRY_LIB_PATH}'\"]/' ../.vscode/settings.json"
+  //"postStartCommand":"cd src && poetry config virtualenvs.in-project true && poetry install"
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "tamasfe.even-better-toml",
+        "timonwong.shellcheck"
+      ]
+    }
+  }
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+  //POETRY_LIB_PATH=$( ls -d $(poetry env info -p)/lib/*/site-packages) && sed -i 's/\("python.analysis.extraPaths" *: *\).*/\1["app","'${POETRY_LIB_PATH//\//\\\/}'"]/' /tmp/settings.json
+}
